@@ -1,0 +1,195 @@
+--Ejercicio 1
+
+potencia:: Int -> Int -> Int
+potencia b 0 = 1
+potencia b e = b * potencia b (e-1)
+
+--Ejercicio 2
+
+valAbsoluto:: Int -> Int
+valAbsoluto x = if x>=0 then x else (-x)
+
+--Ejercicio 3
+
+sumatoria:: Int -> Int
+sumatoria 0 = 0
+sumatoria n = n + sumatoria(n-1)
+
+--Ejercicio 4
+
+divisor :: Int -> Int -> Bool
+divisor 0 a = error "No se puede dividir por 0" 
+divisor a 0 = True -- Cualquier número es divisor de 0 excepto 0
+divisor a b = if a>b then False 
+              else  divisor a (b-a)
+
+--Ejercicio 5
+
+divisor1 :: Int -> Int -> Bool
+divisor1 a b 
+        | a == 0 = error "No se puede dividir por 0"
+        | b == 0 = True -- Cualquier número es divisor de 0 excepto 0
+        | a>b = False
+        | otherwise = divisor1 a (b-a)
+
+--Ejercicio 6
+
+mcd :: Int -> Int -> Int
+mcd a b
+  | b == 0    = a  -- Si b es igual a 0, el mcd es a
+  | otherwise = mcd b (a `mod` b)  -- Aplicar recursión con el algoritmo de los restos
+
+--Ejercicio 7
+
+mayor :: Int -> Int -> Int
+mayor a b
+  | a >= b    = a  -- Si a es mayor o igual a b, devuelve a
+  | otherwise = b  -- En caso contrario, devuelve b
+
+--Ejercicio 8
+
+esPar : Int -> Bool
+esPar a
+  | a mod 2 == 0 = True -- Si el resto de x dividido por 2 es 0, entonces x es par
+  | otherwise = False -- En caso contrario, x es impar
+
+--Listas
+
+--Ejercicio 10
+
+suma :: Num a => [a] -> a
+suma [] = 0
+suma (x:xs) = x + suma xs
+
+--Ejercicio 11
+
+cantidad :: [Int] -> Int
+cantidad [] = 0
+cantidad (x:xs) = 1 + cantidad xs
+
+--Ejercicio 12
+
+--patrones
+
+ultimo :: [Int] -> Int
+ultimo [x] = x
+ultimo (x:xs) = ultimo xs
+
+--guardas
+
+ultimo1 :: [Int] -> Int
+ultimo1 (x:xs)
+        | length xs == 0 = x
+        | otherwise = ultimo1 xs
+
+--Ejercicio 13
+
+inversa :: [Int] -> [Int]
+inversa [x] = [x]
+inversa (x:xs) = (inversa xs) ++ [x]
+
+--Ejercicio 14
+
+sacar :: Int -> [a] -> [a]
+sacar _ [] = [] --vacia
+sacar n (x:xs)
+        | n == 0 = xs 
+        | otherwise = x: sacar (n-1) xs
+
+--Ejercicio 15
+
+eliminar :: Eq a => a -> [a] -> [a]
+eliminar _ [] = []
+eliminar a (x:xs)
+    | a == x = eliminar a xs
+    | otherwise = x : eliminar a xs
+
+--Ejercicio 16
+
+intersec :: Eq a => [a] -> [a] -> [a]
+intersec xs ys = [i | i <- xs, i `elem` ys] 
+
+--Ejercicio 17
+
+rotarIzq :: Int -> [a] -> [a]
+rotarIzq n x = drop n1 x ++ take n1 x
+                where n1 = n `mod` length x
+
+--Ejercicio 18
+
+insertarEn :: Int -> a -> [a] -> [a]
+insertarEn n a (x:xs) 
+    | n == 0 = a : (x:xs)
+    | otherwise = x : insertarEn (n-1) a xs
+
+--Ejercicio 19
+
+insertOrd :: Ord a => a -> [a] -> [a]
+insertOrd nuevo [] = [nuevo]    
+insertOrd nuevo (x:xs)
+        | nuevo <= x = nuevo : x : xs
+        | otherwise = x : insertOrd nuevo xs
+
+--Ejercicio 20
+
+ordenada :: Ord a => [a] -> [a]
+ordenada [] = [] -- Caso base
+ordenada (x:xs) = insertOrd x (ordenada xs)
+
+--Ejercicio 21
+
+ejemplo :: Int -> [Int] -> [Int]
+ejemplo b xs = map (potencia b) xs
+
+--Ejercicio 22
+
+mcdLista :: Int -> [Int] -> [Int]
+mcdLista a xs = map (mcd a) xs
+
+--Ejercicio 23
+
+parejas :: [a] -> [a] -> [(a,a)]
+parejas [] [] = error"No aceptamos listas vacias"
+parejas [x] [y] = [(x,y)]
+parejas (x:xs) (y:ys) = (x,y) : parejas xs ys
+
+--Ejercicio 24
+
+data Mov = N Int | S Int | E Int | O Int
+data Paseo a = Pasos Mov (Paseo a) | Descansa a
+paseoEjemplo = Pasos (E 20) (Pasos (S 30) (Pasos (N 10) (Pasos (O 40) (Descansa 0))))
+
+--Ejercicio 25
+
+aplica :: (Int -> Int -> Int) -> [Int] -> [Int]
+aplica _ [] = []  -- Si la lista está vacía, devuelve una lista vacía.
+aplica f (x:xs) = f x x : aplica f xs  -- Aplica la función a cada elemento y construye la lista resultante recursivamente.
+
+--Ejercicio 26
+
+type Entradas = (Bool,Bool)
+_and,_or:: Entradas -> Bool
+_and (x,y) = if x && y then True else False
+_or (x,y) = if x || y then True else False
+_not :: Bool -> Bool
+_not x = if x then False else True
+
+_xor :: Entradas -> Bool
+--circuito (q1,q2) =(_not q1) `_and` q2  `_or` (_not q2) `_and` q1
+_xor (q1,q2) = or (_and (_not q1,q2), _and (_not q2,q1))
+
+--Ejercicio 27
+
+data ArbolBinario a = 
+         Nodo (ArbolBinario a) a (ArbolBinario a)
+        | Hoja a
+        deriving (Show)
+miArbol = Nodo (Nodo (Hoja 45) 2 (Hoja 78)) 1 (Nodo (Hoja 12) 3 (Nodo (Hoja 23) 4 (Hoja 13)))
+cantNodos :: ArbolBinario a -> Int
+cantNodos (Hoja a) = 0
+cantNodos (Nodo a n a1) = 1 + cantNodos a + cantNodos a1
+ 
+profundidadMaxima :: ArbolBinario a -> Int
+profundidadMaxima (Hoja a) = 1
+profundidadMaxima (Nodo a n a1) = 1 + max (profundidadMaxima a) (profundidadMaxima a1)
+miArbol2 = Nodo (Nodo (Hoja 45) 2 (Hoja 78)) 1 (Nodo (Hoja 12) 3 (Nodo (Nodo (Hoja 30) 5 (Hoja 23)) 4 (Hoja 13)))
